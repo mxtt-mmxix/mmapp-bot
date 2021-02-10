@@ -1,56 +1,42 @@
-const discord = require('discord.js');
-const { CommandHandler } = require('./CommandHandler');
-const client = new discord.Client();
+const util = require('util')
+const Discord = require('discord.js')
+const redis = require('redis')
+const Command = require('./Command')
+const pingCmd = require('./cmd/ping')
+const uptimeCmd = require('./cmd/uptime')
 
-const commandHandler = new CommandHandler('~');
+const client = new Discord.Client()
+const rclient = redis.createClient()
 
-client.on('ready', () => {
-    console.log(`${client.user.tag} is online!`);
-})
+var rootCmd;
 
-client.on('message', msg => {
-    commandHandler.call(msg);
+client.on('ready', async () => {
+
+    console.log(`Logged in as ${client.user.tag}!`);
+
+    rclient.set('startTime', Date.now().toString(), err => {
+        if (err) {
+            console.log(err)
+            return
+        }
+    })
+
+    rootCmd = new Command((msg) => {
+        msg.reply("Sorry, but we do not recognize this command.")
+    })
+
+    rootCmd.attach('ping', pingCmd)
+    rootCmd.attach('uptime', uptimeCmd)
+
 });
 
-client.login(process.env.BOT_AUTH);
+client.on('message', msg => {
 
-commandHandler.attach('ping', msg => {
-    msg.reply('pong!');
-})
-
-commandHandler.attach('uptime', msg => {
-
-    let milliseconds = (Date.now() - startTime);
-    let seconds, minutes, hours, days;
-
-    if (milliseconds >= 1000) {
-
-        seconds = Math.floor(startTime / 1000);
-        milliseconds = startTime % 1000;
-
-        if (seconds >= 60) {
-
-            minutes = Math.floor(seconds / 60);
-            seconds %= 60;
-
-            if (minutes >= 60) {
-
-                hours = Math.floor(minutes / 60);
-                minutes %= 60;
-
-                if (hours >= 24) {
-
-                    days = Math.floor(hours / 24);
-                    hours %= 24;
-
-                }
-
-            }
-
-        }
-
+    if (msg.content.startsWith('~')) {
+        const args = msg.content.substring(1).split(' ')
+        rootCmd.call(msg, args)
     }
 
-    msg.reply(`Uptime: ${days ? `${days}d ` : ''}${hours ? `${hours}h ` : ''}${minutes ? `${minutes}m ` : ''}${seconds ? `${seconds}s ` : ''}${milliseconds ? `${milliseconds}ms ` : null}`)
+});
 
-})
+client.login(process.env.BOT_AUTH)
