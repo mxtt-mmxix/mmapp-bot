@@ -1,12 +1,10 @@
-const util = require('util')
 const Discord = require('discord.js')
-const redis = require('redis')
+const redis = require('./Redis')
 const Command = require('./Command')
 const pingCmd = require('./cmd/ping')
 const uptimeCmd = require('./cmd/uptime')
 
 const client = new Discord.Client()
-const rclient = redis.createClient()
 
 var rootCmd;
 
@@ -14,12 +12,7 @@ client.on('ready', async () => {
 
     console.log(`Logged in as ${client.user.tag}!`);
 
-    rclient.set('startTime', Date.now().toString(), err => {
-        if (err) {
-            console.log(err)
-            return
-        }
-    })
+    await redis.set('startTime', Date.now());
 
     rootCmd = new Command((msg) => {
         msg.reply("Sorry, but we do not recognize this command.")
