@@ -33,7 +33,7 @@ client.on('ready', async () => {
 client.on('message', msg => {
 
     if (msg.content.startsWith('~')) {
-        const args = msg.content.substring(1).split(' ')
+        const args = msg.content.toLowerCase().substring(1).trim().split(/ +/);
         rootCmd.call(msg, args)
     }
 
