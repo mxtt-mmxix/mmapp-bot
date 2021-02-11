@@ -19,7 +19,7 @@ class Command {
     }
 
     get(cmd) {
-        return this.arguments.get('cmd')
+        return this.arguments.get(cmd)
     }
 
 }
