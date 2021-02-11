@@ -1,10 +1,11 @@
-const Discord = require('discord.js')
-const redis = require('./Redis')
-const Command = require('./Command')
-const pingCmd = require('./cmd/ping')
-const uptimeCmd = require('./cmd/uptime')
+const Discord = require('discord.js');
+const redis = require('./Redis');
+const Command = require('./Command');
+const pingCmd = require('./cmd/ping');
+const uptimeCmd = require('./cmd/uptime');
+const pfpCmd = require('./cmd/pfp');
 
-const client = new Discord.Client()
+const client = new Discord.Client();
 
 var rootCmd;
 
@@ -20,6 +21,7 @@ client.on('ready', async () => {
 
     rootCmd.attach('ping', pingCmd)
     rootCmd.attach('uptime', uptimeCmd)
+    rootCmd.attach('pfp', pfpCmd)
 
 });
 
@@ -32,4 +34,4 @@ client.on('message', msg => {
 
 });
 
-client.login(process.env.BOT_AUTH)
+client.login(process.env.BOT_AUTH);
