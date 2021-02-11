@@ -1,5 +1,5 @@
+const Discord = require('discord.js')
 const Command = require('../Command')
-const util = require('util')
 const redis = require('redis')
 const client = redis.createClient()
 
@@ -39,14 +39,20 @@ const uptime = new Command((msg, redis) => {
 
         var response = "";
 
-        if (d) response += d.toString() + "d "
-        if (h) response += h.toString() + "h "
-        if (m) response += m.toString() + "m "
-        if (s) response += s.toString() + "s "
+        if (d) response += d.toString() + " dys, "
+        if (h) response += h.toString() + " hrs, "
+        if (m) response += m.toString() + " min, "
+        if (s) response += s.toString() + " sec, "
 
         response += uptime.toString() + "ms"
 
-        msg.channel.send("Uptime: " + response)
+        const uptimeEmbed = new Discord.MessageEmbed()
+            .setColor('#0099ff')
+            .setTitle('Uptime')
+            .setDescription(response)
+            .setFooter("Started: " + (new Date(startTime)).toUTCString())
+
+        msg.channel.send(uptimeEmbed)
 
     })
 })
