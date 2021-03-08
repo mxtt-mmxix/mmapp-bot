@@ -4,6 +4,7 @@ const Command = require('./Command');
 const pingCmd = require('./cmd/ping');
 const uptimeCmd = require('./cmd/uptime');
 const pfpCmd = require('./cmd/pfp');
+const earningCmd = require('./cmd/earnings')
 
 const client = new Discord.Client();
 
@@ -22,6 +23,7 @@ client.on('ready', async () => {
     rootCmd.attach('ping', pingCmd)
     rootCmd.attach('uptime', uptimeCmd)
     rootCmd.attach('pfp', pfpCmd)
+    rootCmd.attach('earnings', earningCmd)
 
 });
 
@@ -29,7 +31,12 @@ client.on('message', msg => {
 
     if (msg.content.startsWith('~')) {
         const args = msg.content.toLowerCase().substring(1).trim().split(/ +/);
-        rootCmd.call(msg, args)
+        rootCmd.call(msg, args);
+    } else {
+        redis.lpush(`channel-history-${msg.channel.id}`, msg.id);
+        if (redis.llen > 32) {
+            redis.ltrim(`channel-history-${msg.channel.id}`, 0, 31);
+        }
     }
 
 });
