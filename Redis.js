@@ -8,5 +8,7 @@ module.exports = {
     hget: promisify(client.hget).bind(client),
     llen: promisify(client.llen).bind(client),
     lpush: promisify(client.lpush).bind(client),
-    ltrim: promisify(client.ltrim).bind(client)
+    rpush: promisify(client.rpush).bind(client),
+    ltrim: promisify(client.ltrim).bind(client),
+    lrange: promisify(client.lrange).bind(client)
 };
