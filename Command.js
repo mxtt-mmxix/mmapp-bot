@@ -1,3 +1,5 @@
+const Discord = require('discord.js')
+
 class Command {
 
     constructor(run) {
@@ -9,7 +11,18 @@ class Command {
         if (cmd.arguments.has(args[0])) {
             this.call(msg, args, cmd.arguments.get(args[0]));
         } else {
-            cmd.run(msg, args);
+            try {
+                cmd.run(msg, args);
+            } catch (e) {
+                msg.channel.send(
+                    new Discord.MessageEmbed()
+                        .setTitle('Error')
+                        .setColor('ff0000')
+                        .setDescription('Nice, you crashed the bot; Recovering...')
+                )
+            } finally {
+                return
+            }
         }
     }
 
